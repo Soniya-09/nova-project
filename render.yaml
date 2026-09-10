@@ -21,10 +21,12 @@ services:
       - key: NODE_ENV
         value: production
       - key: CLIENT_URL
-        fromService:
-          type: web
-          name: nova-frontend
-          property: host
+        # Render's fromService "host" property returns the internal
+        # (private-network) hostname, not the public onrender.com URL —
+        # not usable for CORS against a browser. Set this manually after
+        # first deploy to the frontend's public URL, e.g.
+        # https://nova-frontend-xxxx.onrender.com
+        sync: false
 
   - type: web
     name: nova-frontend
@@ -34,7 +36,9 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: nova-backend
-          property: host
+        # Same issue as CLIENT_URL above — set manually after first deploy
+        # to the backend's public URL, e.g.
+        # https://nova-backend-xxxx.onrender.com
+        # (a static site rebuilds automatically when its env vars change,
+        # since Vite bakes this in at build time)
+        sync: false

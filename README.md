@@ -57,7 +57,17 @@ as a static site — with `DATABASE_URL`, `JWT_SECRET`, `CLIENT_URL` and
 4. The schema is applied automatically on first backend boot
    (`backend/src/migrate.js` runs `database/schema.sql`, which is
    idempotent).
-5. Once live, open the `nova-frontend` URL — that's the deployed app.
+5. Cross-link the two services (Render has no blueprint-level way to
+   inject one service's *public* URL into another — its `fromService`
+   `host` property is the internal-network hostname, not a public URL):
+   - Open **nova-backend > Environment**, set `CLIENT_URL` to
+     `nova-frontend`'s public URL (e.g. `https://nova-frontend-xxxx.onrender.com`).
+   - Open **nova-frontend > Environment**, set `VITE_API_URL` to
+     `nova-backend`'s public URL (e.g. `https://nova-backend-xxxx.onrender.com`).
+   - Saving `VITE_API_URL` triggers a rebuild automatically (it's baked
+     in at Vite build time); saving `CLIENT_URL` just restarts the
+     backend.
+6. Once both redeploy, open the `nova-frontend` URL — that's the live app.
 
 Free-tier services spin down after inactivity and the free Postgres
 database expires after 30 days; upgrade the plan in `render.yaml` for
