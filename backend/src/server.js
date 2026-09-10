@@ -7,10 +7,16 @@ const auth = require('./routes/auth');
 const projects = require('./routes/projects');
 const tasks = require('./routes/tasks');
 const db = require('./db');
+const migrate = require('./migrate');
 
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+// CLIENT_URL may be a bare host (e.g. when injected by a host's
+// fromService env var) or a full origin (local dev) — normalize both.
+const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+const clientOrigin = clientUrl.startsWith('http') ? clientUrl : `https://${clientUrl}`;
+
+app.use(cors({ origin: clientOrigin }));
 app.use(express.json());
 
 app.get('/api/health', async (req, res) => {
@@ -33,4 +39,13 @@ app.use((err, req, res, next) => {
 });
 
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`NOVA API running on port ${port}`));
+
+(async () => {
+  try {
+    await migrate();
+    app.listen(port, () => console.log(`NOVA API running on port ${port}`));
+  } catch (e) {
+    console.error('Startup migration failed:', e);
+    process.exit(1);
+  }
+})();

@@ -1,4 +1,7 @@
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// VITE_API_URL may be a bare host (e.g. when injected by a host's
+// fromService env var at build time) or a full URL (local dev) — normalize both.
+const rawBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE = rawBase.startsWith('http') ? rawBase : `https://${rawBase}/api`;
 
 export async function api(path, options = {}) {
   const token = localStorage.getItem('nova_token');
