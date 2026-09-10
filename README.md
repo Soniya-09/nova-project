@@ -2,6 +2,9 @@
 
 A full-stack project management application built for the Sankar Group Full Stack Development Internship assignment.
 
+**Live app:** https://nova-frontend-o9ox.onrender.com
+**Backend API:** https://nova-backend-38ey.onrender.com/api/health
+
 ## Stack
 - Frontend: React + Vite
 - Backend: Node.js + Express
