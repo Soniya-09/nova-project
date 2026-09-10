@@ -63,7 +63,8 @@ as a static site — with `DATABASE_URL`, `JWT_SECRET`, `CLIENT_URL` and
    - Open **nova-backend > Environment**, set `CLIENT_URL` to
      `nova-frontend`'s public URL (e.g. `https://nova-frontend-xxxx.onrender.com`).
    - Open **nova-frontend > Environment**, set `VITE_API_URL` to
-     `nova-backend`'s public URL (e.g. `https://nova-backend-xxxx.onrender.com`).
+     `nova-backend`'s public URL (e.g. `https://nova-backend-xxxx.onrender.com`
+     — with or without a trailing `/api`, both work).
    - Saving `VITE_API_URL` triggers a rebuild automatically (it's baked
      in at Vite build time); saving `CLIENT_URL` just restarts the
      backend.

@@ -1,7 +1,10 @@
-// VITE_API_URL may be a bare host (e.g. when injected by a host's
-// fromService env var at build time) or a full URL (local dev) — normalize both.
-const rawBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const BASE = rawBase.startsWith('http') ? rawBase : `https://${rawBase}/api`;
+// VITE_API_URL may be a bare host, a full origin, or a full origin that
+// already ends in /api — accept all three so a small formatting slip in
+// deploy config doesn't silently break every request.
+const raw = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const withProtocol = raw.startsWith('http') ? raw : `https://${raw}`;
+const withoutTrailingSlash = withProtocol.replace(/\/+$/, '');
+const BASE = withoutTrailingSlash.endsWith('/api') ? withoutTrailingSlash : `${withoutTrailingSlash}/api`;
 
 export async function api(path, options = {}) {
   const token = localStorage.getItem('nova_token');
